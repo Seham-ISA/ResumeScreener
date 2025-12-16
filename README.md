@@ -277,5 +277,5 @@ MIT License — feel free to use and modify.
 ---
 
 <p align="center">
-  Built with ❤️ by <strong>Boubaker Khemili</strong>
+  Built with ❤️ by <strong>Siham ISA</strong>
 </p>

@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Screening Tool v2.2.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    
+    .decision-STRONG_HIRE { 
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+    }
+    .decision-HIRE { 
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+    }
+    .decision-MAYBE { 
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+    }
+    .decision-NO_HIRE { 
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+    }
+    .decision-REJECT { 
+      background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+      color: white;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .score-bar {
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #e5e7eb;
+    }
+    
+    .score-fill {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .result-card {
+      animation: slideIn 0.3s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold">Resume Screening Tool</h1>
+          <p class="mt-2 text-indigo-100">AI-powered candidate evaluation • Version 2.2.0</p>
+        </div>
+        <div class="hidden md:flex items-center space-x-2 bg-white/10 rounded-lg px-4 py-2">
+          <span class="text-sm">System Status:</span>
+          <span id="healthStatus" class="text-sm font-semibold">Checking...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    
+    <!-- Configuration Form -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-8">
+      <h2 class="text-2xl font-bold mb-6 flex items-center">
+        <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+        </svg>
+        Configuration
+      </h2>
+      
+      <form id="screeningForm" class="space-y-6">
+        
+        <!-- Job Description -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              📄 Job Description (Text)
+            </label>
+            <textarea 
+              id="jdText" 
+              rows="8"
+              class="w-full rounded-lg border-2 border-gray-200 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+              placeholder="Paste the full job description here..."></textarea>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              📎 Or Upload JD File
+            </label>
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition">
+              <input 
+                type="file" 
+                id="jdFile" 
+                accept=".pdf,.docx,.txt"
+                class="hidden">
+              <label for="jdFile" class="cursor-pointer">
+                <div class="text-gray-500 mb-2">
+                  <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                  </svg>
+                  <span class="text-sm font-medium">Click to upload</span>
+                  <p class="text-xs text-gray-400 mt-1">PDF, DOCX, TXT</p>
+                </div>
+              </label>
+              <div id="jdFileName" class="text-sm text-gray-600 mt-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Requirements -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              🔴 Must-Have Skills <span class="text-red-500">*</span>
+            </label>
+            <textarea 
+              id="mustHaves"
+              rows="3"
+              class="w-full rounded-lg border-2 border-gray-200 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+              placeholder="Python, AWS, 5+ years experience"></textarea>
+            <p class="text-xs text-gray-500 mt-1">Comma or newline separated. Scored proportionally (4/5 = 80%).</p>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              🟢 Nice-to-Have Skills
+            </label>
+            <textarea 
+              id="niceToHaves"
+              rows="3"
+              class="w-full rounded-lg border-2 border-gray-200 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+              placeholder="Docker, React, TypeScript"></textarea>
+            <p class="text-xs text-gray-500 mt-1">Bonus points for each matched skill.</p>
+          </div>
+        </div>
+
+        <!-- Experience & Education -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              📅 Minimum Years of Experience
+            </label>
+            <input 
+              type="number" 
+              id="requiredYears"
+              min="0" 
+              max="30"
+              class="w-full rounded-lg border-2 border-gray-200 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"
+              placeholder="e.g., 5">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+              🎓 Required Education
+            </label>
+            <select 
+              id="requiredEducation"
+              class="w-full rounded-lg border-2 border-gray-200 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition">
+              <option value="">Not Required</option>
+              <option value="high school">High School</option>
+              <option value="bachelor">Bachelor's Degree</option>
+              <option value="master">Master's Degree</option>
+              <option value="phd">PhD/Doctorate</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Resume Upload -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            📋 Upload Resumes <span class="text-red-500">*</span> <span class="text-gray-500 text-xs">(Max 50 files)</span>
+          </label>
+          <div 
+            id="dropZone"
+            class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-400 transition cursor-pointer">
+            <input 
+              type="file" 
+              id="resumeFiles" 
+              multiple 
+              accept=".pdf,.docx,.txt"
+              class="hidden">
+            <label for="resumeFiles" class="cursor-pointer">
+              <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <p class="text-lg font-medium text-gray-700">Drag & drop resumes here</p>
+              <p class="text-sm text-gray-500 mt-2">or click to browse</p>
+              <p class="text-xs text-gray-400 mt-1">PDF, DOCX, TXT • Max 10MB per file</p>
+            </label>
+          </div>
+          <div id="fileList" class="mt-4 space-y-2"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex items-center justify-between pt-4 border-t">
+          <button 
+            type="submit"
+            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition shadow-lg hover:shadow-xl flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            Run Screening
+          </button>
+          
+          <button 
+            type="button"
+            id="btnExport"
+            disabled
+            class="bg-gray-200 text-gray-500 px-6 py-3 rounded-lg font-semibold cursor-not-allowed">
+            📥 Export CSV
+          </button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="progressWrap" class="hidden">
+          <div class="flex justify-between text-sm text-gray-600 mb-2">
+            <span id="progressLabel">Processing...</span>
+            <span id="progressCount">0 / 0</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div id="progressBar" class="h-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Summary Dashboard -->
+    <div id="summaryDash" class="hidden mb-8">
+      <h2 class="text-2xl font-bold mb-4">📊 Summary</h2>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4 text-center">
+          <div class="text-3xl font-bold text-green-700" id="countStrongHire">0</div>
+          <div class="text-sm font-semibold text-green-600 mt-1">STRONG HIRE</div>
+        </div>
+        <div class="bg-gradient-to-br from-blue-50 to-sky-50 border-2 border-blue-200 rounded-xl p-4 text-center">
+          <div class="text-3xl font-bold text-blue-700" id="countHire">0</div>
+          <div class="text-sm font-semibold text-blue-600 mt-1">HIRE</div>
+        </div>
+        <div class="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-xl p-4 text-center">
+          <div class="text-3xl font-bold text-yellow-700" id="countMaybe">0</div>
+          <div class="text-sm font-semibold text-yellow-600 mt-1">MAYBE</div>
+        </div>
+        <div class="bg-gradient-to-br from-orange-50 to-red-50 border-2 border-orange-200 rounded-xl p-4 text-center">
+          <div class="text-3xl font-bold text-orange-700" id="countNoHire">0</div>
+          <div class="text-sm font-semibold text-orange-600 mt-1">NO HIRE</div>
+        </div>
+        <div class="bg-gradient-to-br from-red-50 to-rose-50 border-2 border-red-300 rounded-xl p-4 text-center">
+          <div class="text-3xl font-bold text-red-800" id="countReject">0</div>
+          <div class="text-sm font-semibold text-red-700 mt-1">REJECT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold">🎯 Results</h2>
+        
+        <!-- Filter Tabs -->
+        <div class="flex gap-2 overflow-x-auto">
+          <button class="tab-btn px-4 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white" data-tab="all">All</button>
+          <button class="tab-btn px-4 py-2 text-sm font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200" data-tab="strong_hire">Strong Hire</button>
+          <button class="tab-btn px-4 py-2 text-sm font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200" data-tab="hire">Hire</button>
+          <button class="tab-btn px-4 py-2 text-sm font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200" data-tab="maybe">Maybe</button>
+          <button class="tab-btn px-4 py-2 text-sm font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200" data-tab="rejected">Rejected</button>
+        </div>
+      </div>
+      
+      <div id="resultsContainer" class="space-y-4"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="bg-white rounded-2xl shadow-xl p-12 text-center">
+      <svg class="w-24 h-24 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      <h3 class="text-xl font-semibold text-gray-700 mb-2">No Results Yet</h3>
+      <p class="text-gray-500">Upload a job description and resumes to start screening</p>
+    </div>
+
+  </main>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center rounded-t-2xl">
+        <h3 id="modalTitle" class="text-xl font-bold">Candidate Details</h3>
+        <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-3xl leading-none">&times;</button>
+      </div>
+      <div id="modalBody" class="p-6"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="max-w-7xl mx-auto px-4 py-8 text-center text-sm text-gray-500">
+    <p>Built with ❤️ by Boubaker Khemili • Resume Screening Tool v2.2.0</p>
+    <p class="mt-2">Powered by Sentence Transformers & FastAPI</p>
+  </footer>
+
+  <script>
+    let allResults = [];
+    let currentFilter = 'all';
+    let selectedFiles = [];
+
+    // Check health on load
+    async function checkHealth() {
+      try {
+        const response = await fetch('/api/health');
+        const data = await response.json();
+        document.getElementById('healthStatus').textContent = `✅ ${data.version}`;
+        document.getElementById('healthStatus').classList.add('text-green-200');
+      } catch (error) {
+        document.getElementById('healthStatus').textContent = '❌ Offline';
+        document.getElementById('healthStatus').classList.add('text-red-200');
+      }
+    }
+    checkHealth();
+
+    // File handling
+    const resumeInput = document.getElementById('resumeFiles');
+    const jdFileInput = document.getElementById('jdFile');
+    const dropZone = document.getElementById('dropZone');
+
+    jdFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('jdFileName').textContent = `✓ ${file.name}`;
+      }
+    });
+
+    resumeInput.addEventListener('change', updateFileList);
+
+    // Drag and drop
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('border-indigo-500', 'bg-indigo-50');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-indigo-500', 'bg-indigo-50');
+      
+      const dt = new DataTransfer();
+      Array.from(e.dataTransfer.files).forEach(file => {
+        if (file.name.match(/\.(pdf|docx|txt)$/i)) {
+          dt.items.add(file);
+        }
+      });
+      
+      resumeInput.files = dt.files;
+      updateFileList();
+    });
+
+    function updateFileList() {
+      const files = Array.from(resumeInput.files);
+      const fileList = document.getElementById('fileList');
+      
+      if (files.length === 0) {
+        fileList.innerHTML = '';
+        return;
+      }
+
+      fileList.innerHTML = files.map((file, idx) => `
+        <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3 border">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <span class="text-sm font-medium text-gray-700">${file.name}</span>
+            <span class="text-xs text-gray-500 ml-2">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+          </div>
+          <button type="button" onclick="removeFile(${idx})" class="text-red-500 hover:text-red-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function removeFile(idx) {
+      const dt = new DataTransfer();
+      const files = Array.from(resumeInput.files);
+      files.forEach((file, i) => {
+        if (i !== idx) dt.items.add(file);
+      });
+      resumeInput.files = dt.files;
+      updateFileList();
+    }
+
+    // Form submission
+    document.getElementById('screeningForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData();
+      
+      // Get JD
+      const jdText = document.getElementById('jdText').value;
+      const jdFile = document.getElementById('jdFile').files[0];
+      
+      if (jdFile) {
+        formData.append('jd_file', jdFile);
+      } else if (jdText) {
+        formData.append('jd_text', jdText);
+      } else {
+        alert('⚠️ Please provide a job description');
+        return;
+      }
+      
+      // Get resumes
+      const resumes = document.getElementById('resumeFiles').files;
+      if (!resumes.length) {
+        alert('⚠️ Please upload at least one resume');
+        return;
+      }
+      
+      if (resumes.length > 50) {
+        alert('⚠️ Maximum 50 resumes allowed');
+        return;
+      }
+      
+      for (let file of resumes) {
+        formData.append('resumes', file);
+      }
+      
+      // Get requirements
+      const mustHaves = document.getElementById('mustHaves').value;
+      const niceToHaves = document.getElementById('niceToHaves').value;
+      const reqYears = document.getElementById('requiredYears').value;
+      const reqEdu = document.getElementById('requiredEducation').value;
+      
+      if (mustHaves) formData.append('must_haves', mustHaves);
+      if (niceToHaves) formData.append('nice_to_haves', niceToHaves);
+      if (reqYears) formData.append('required_years', reqYears);
+      if (reqEdu) formData.append('required_education', reqEdu);
+      
+      // Show progress
+      const progressWrap = document.getElementById('progressWrap');
+      const progressBar = document.getElementById('progressBar');
+      const progressLabel = document.getElementById('progressLabel');
+      const progressCount = document.getElementById('progressCount');
+      
+      progressWrap.classList.remove('hidden');
+      progressLabel.textContent = 'Processing resumes...';
+      progressCount.textContent = `0 / ${resumes.length}`;
+      progressBar.style.width = '0%';
+      
+      document.getElementById('emptyState').classList.add('hidden');
+      
+      try {
+        const response = await fetch('/api/screen', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.detail || 'Screening failed');
+        }
+        
+        const data = await response.json();
+        
+        // Animate progress to 100%
+        progressBar.style.width = '100%';
+        progressLabel.textContent = 'Complete!';
+        progressCount.textContent = `${resumes.length} / ${resumes.length}`;
+        
+        setTimeout(() => {
+          progressWrap.classList.add('hidden');
+        }, 1000);
+        
+        allResults = data.results || [];
+        displayResults(data);
+        
+      } catch (error) {
+        alert('❌ Error: ' + error.message);
+        progressWrap.classList.add('hidden');
+      }
+    });
+
+    function displayResults(data) {
+      // Update summary
+      document.getElementById('summaryDash').classList.remove('hidden');
+      document.getElementById('countStrongHire').textContent = data.summary.strong_hire;
+      document.getElementById('countHire').textContent = data.summary.hire;
+      document.getElementById('countMaybe').textContent = data.summary.maybe;
+      document.getElementById('countNoHire').textContent = data.summary.no_hire;
+      document.getElementById('countReject').textContent = data.summary.reject;
+      
+      // Show results section
+      document.getElementById('resultsSection').classList.remove('hidden');
+      document.getElementById('emptyState').classList.add('hidden');
+      
+      // Enable export
+      const btnExport = document.getElementById('btnExport');
+      btnExport.disabled = false;
+      btnExport.classList.remove('bg-gray-200', 'text-gray-500', 'cursor-not-allowed');
+      btnExport.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700', 'cursor-pointer');
+      
+      renderResults(allResults);
+    }
+
+    function renderResults(results) {
+      const container = document.getElementById('resultsContainer');
+      
+      if (!results.length) {
+        container.innerHTML = '<p class="text-center text-gray-500 py-8">No results match this filter</p>';
+        return;
+      }
+      
+      container.innerHTML = results.map((r, idx) => `
+        <div class="result-card bg-white rounded-xl shadow-lg border-l-4 ${getBorderColor(r.decision)} p-6 hover:shadow-xl transition" style="animation-delay: ${idx * 0.05}s">
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <h3 class="text-xl font-bold text-gray-800">${r.candidate_name}</h3>
+                <span class="badge decision-${r.decision}">${r.decision.replace(/_/g, ' ')}</span>
+                <span class="text-sm text-gray-500">Confidence: ${r.confidence}%</span>
+              </div>
+              
+              <p class="text-sm text-gray-600 mb-3">${r.filename}</p>
+              
+              <!-- Score Breakdown -->
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+                <div>
+                  <div class="text-xs text-gray-500">Total Score</div>
+                  <div class="font-bold text-lg">${r.total_score}/100</div>
+                </div>
+                <div>
+                  <div class="text-xs text-gray-500">Semantic</div>
+                  <div class="font-semibold">${r.semantic_score}%</div>
+                </div>
+                <div>
+                  <div class="text-xs text-gray-500">Keywords</div>
+                  <div class="font-semibold">${r.keyword_coverage}%</div>
+                </div>
+                <div>
+                  <div class="text-xs text-gray-500">Must-Haves</div>
+                  <div class="font-semibold">${r.must_have_score}%</div>
+                </div>
+                <div>
+                  <div class="text-xs text-gray-500">Experience</div>
+                  <div class="font-semibold">${r.experience_score}%</div>
+                </div>
+                <div>
+                  <div class="text-xs text-gray-500">Education</div>
+                  <div class="font-semibold">${r.education_score}%</div>
+                </div>
+              </div>
+
+              ${r.years_experience ? `<p class="text-sm text-gray-600 mb-2">📅 Experience: ${r.years_experience} years</p>` : ''}
+              
+              <!-- Strengths -->
+              ${r.strengths && r.strengths.length ? `
+                <div class="mb-2">
+                  ${r.strengths.slice(0, 2).map(s => `
+                    <span class="inline-block text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full mr-1 mb-1">${s}</span>
+                  `).join('')}
+                </div>
+              ` : ''}
+              
+              <!-- Red Flags -->
+              ${r.red_flags && r.red_flags.length ? `
+                <div class="mb-2">
+                  ${r.red_flags.slice(0, 2).map(f => `
+                    <span class="inline-block text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full mr-1 mb-1">${f}</span>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
+            
+            <button 
+              onclick="showDetails(${idx})"
+              class="ml-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition text-sm font-semibold">
+              View Details
+            </button>
+          </div>
+          
+          <!-- Progress Bar -->
+          <div class="score-bar">
+            <div class="score-fill ${getScoreColor(r.total_score)}" style="width: ${r.total_score}%"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getBorderColor(decision) {
+      const colors = {
+        'STRONG_HIRE': 'border-green-500',
+        'HIRE': 'border-blue-500',
+        'MAYBE': 'border-yellow-500',
+        'NO_HIRE': 'border-orange-500',
+        'REJECT': 'border-red-700'
+      };
+      return colors[decision] || 'border-gray-300';
+    }
+
+    function getScoreColor(score) {
+      if (score >= 85) return 'bg-green-500';
+      if (score >= 75) return 'bg-blue-500';
+      if (score >= 60) return 'bg-yellow-500';
+      if (score >= 45) return 'bg-orange-500';
+      return 'bg-red-500';
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tab = e.target.dataset.tab;
+        currentFilter = tab;
+        
+        // Update active tab
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('bg-indigo-600', 'text-white');
+          b.classList.add('bg-gray-100', 'text-gray-600');
+        });
+        e.target.classList.remove('bg-gray-100', 'text-gray-600');
+        e.target.classList.add('bg-indigo-600', 'text-white');
+        
+        // Filter results
+        let filtered = allResults;
+        if (tab !== 'all') {
+          const decisionMap = {
+            'strong_hire': 'STRONG_HIRE',
+            'hire': 'HIRE',
+            'maybe': 'MAYBE',
+            'rejected': ['NO_HIRE', 'REJECT']
+          };
+          const targetDecision = decisionMap[tab];
+          filtered = allResults.filter(r => 
+            Array.isArray(targetDecision) ? targetDecision.includes(r.decision) : r.decision === targetDecision
+          );
+        }
+        
+        renderResults(filtered);
+      });
+    });
+
+    function showDetails(index) {
+      const r = allResults[index];
+      
+      document.getElementById('modalTitle').innerHTML = `
+        ${r.candidate_name} 
+        <span class="badge decision-${r.decision} ml-2">${r.decision.replace(/_/g, ' ')}</span>
+      `;
+      
+      const body = document.getElementById('modalBody');
+      body.innerHTML = `
+        <div class="space-y-6">
+          
+          <!-- Score Breakdown -->
+          <div class="bg-gray-50 rounded-xl p-5 border">
+            <h4 class="font-bold text-lg mb-4">📊 Score Breakdown</h4>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div class="text-gray-600 mb-1">Total Score</div>
+                <div class="text-2xl font-bold text-indigo-600">${r.total_score}/100</div>
+              </div>
+              <div>
+                <div class="text-gray-600 mb-1">Confidence</div>
+                <div class="text-2xl font-bold text-purple-600">${r.confidence}%</div>
+              </div>
+              <div>
+                <div class="text-gray-600">Semantic Similarity</div>
+                <div class="font-semibold">${r.semantic_score}%</div>
+              </div>
+              <div>
+                <div class="text-gray-600">Keyword Coverage</div>
+                <div class="font-semibold">${r.keyword_coverage}%</div>
+              </div>
+              <div>
+                <div class="text-gray-600">Must-Haves</div>
+                <div class="font-semibold">${r.must_have_score}%</div>
+              </div>
+              <div>
+                <div class="text-gray-600">Experience</div>
+                <div class="font-semibold">${r.experience_score}%</div>
+              </div>
+              <div>
+                <div class="text-gray-600">Education</div>
+                <div class="font-semibold">${r.education_score}%</div>
+              </div>
+              <div>
+                <div class="text-gray-600">Bonus</div>
+                <div class="font-semibold">${r.bonus_score}%</div>
+              </div>
+            </div>
+          </div>
+
+          ${r.reasoning ? `
+            <div class="bg-blue-50 rounded-xl p-5 border border-blue-200">
+              <h4 class="font-bold text-lg mb-3">💡 Reasoning</h4>
+              <div class="text-sm whitespace-pre-line leading-relaxed">${r.reasoning}</div>
+            </div>
+          ` : ''}
+
+          ${r.strengths && r.strengths.length ? `
+            <div>
+              <h4 class="font-bold text-lg mb-3">✅ Strengths</h4>
+              <ul class="space-y-2">
+                ${r.strengths.map(s => `<li class="flex items-start"><span class="text-green-500 mr-2">✓</span><span class="text-sm">${s}</span></li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+
+          ${r.red_flags && r.red_flags.length ? `
+            <div>
+              <h4 class="font-bold text-lg mb-3">⚠️ Red Flags</h4>
+              <ul class="space-y-2">
+                ${r.red_flags.map(f => `<li class="flex items-start"><span class="text-red-500 mr-2">!</span><span class="text-sm">${f}</span></li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+
+          ${r.matched_keywords && r.matched_keywords.length ? `
+            <div>
+              <h4 class="font-bold text-lg mb-3">🔑 Matched Keywords (${r.matched_keywords.length})</h4>
+              <div class="flex flex-wrap gap-2">
+                ${r.matched_keywords.map(k => `<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">${k}</span>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          ${r.missing_must_haves && r.missing_must_haves.length ? `
+            <div>
+              <h4 class="font-bold text-lg mb-3">❌ Missing Must-Haves (${r.missing_must_haves.length})</h4>
+              <div class="flex flex-wrap gap-2">
+                ${r.missing_must_haves.map(m => `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">${m}</span>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          ${r.matched_nice_to_haves && r.matched_nice_to_haves.length ? `
+            <div>
+              <h4 class="font-bold text-lg mb-3">⭐ Matched Nice-to-Haves (${r.matched_nice_to_haves.length})</h4>
+              <div class="flex flex-wrap gap-2">
+                ${r.matched_nice_to_haves.map(n => `<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">${n}</span>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+          
+          <div class="text-xs text-gray-500 pt-4 border-t">
+            File: ${r.filename}
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('detailModal').addEventListener('click', (e) => {
+      if (e.target.id === 'detailModal') closeModal();
+    });
+
+    // Export to CSV
+    document.getElementById('btnExport').addEventListener('click', () => {
+      if (!allResults.length) return;
+      
+      const headers = ['Rank', 'Candidate', 'Decision', 'Confidence', 'Total', 'Semantic', 'Keywords', 'Must-Haves', 'Experience', 'Education', 'Years Exp', 'Filename'];
+      const rows = allResults.map((r, idx) => [
+        idx + 1,
+        r.candidate_name,
+        r.decision,
+        r.confidence,
+        r.total_score,
+        r.semantic_score,
+        r.keyword_coverage,
+        r.must_have_score,
+        r.experience_score,
+        r.education_score,
+        r.years_experience || 'N/A',
+        r.filename
+      ]);
+      
+      let csv = headers.join(',') + '\n';
+      rows.forEach(row => {
+        csv += row.map(v => `"${v}"`).join(',') + '\n';
+      });
+      
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `screening_results_${Date.now()}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  </script>
+
+</body>
+</html>

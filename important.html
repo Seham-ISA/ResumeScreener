@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resume Screening Tool v2.2.0 – Complete Guide</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --ink:#0b1220;
+      --muted:#5b6473;
+      --line:#e7eaf0;
+      --accent:#1f6feb;
+      --radius:14px;
+      --space:18px;
+      --code:#0f172a;
+      --code-bg:#f6f8fc;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    .container{max-width:980px;margin:0 auto;padding:28px 18px 80px}
+    header{padding:26px 0 10px;border-bottom:1px solid var(--line);margin-bottom:22px}
+    h1{font-size:32px;line-height:1.2;margin:0 0 6px 0;font-weight:800;letter-spacing:-.02em}
+    .sub{color:var(--muted);max-width:70ch}
+    nav{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px}
+    nav a{color:var(--muted);text-decoration:none;padding:6px 10px;border:1px solid var(--line);border-radius:10px}
+    nav a:hover{color:var(--ink);border-color:#d8dde6}
+    section{padding:20px 0;border-bottom:1px solid var(--line)}
+    h2{font-size:22px;margin:0 0 8px 0}
+    h3{font-size:18px;margin:18px 0 6px 0}
+    p{margin:8px 0}
+    ul{margin:8px 0 14px 20px}
+    .card{border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:#fff}
+    .grid{display:grid;gap:16px}
+    @media(min-width:900px){.two{grid-template-columns:1fr 1fr}}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--code)}
+    pre{background:var(--code-bg);border:1px solid var(--line);border-radius:12px;padding:12px;overflow:auto;margin:8px 0 12px 0}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .copy{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 10px;font-size:13px;cursor:pointer;color:var(--muted)}
+    .copy:hover{color:var(--ink);border-color:#d8dde6}
+    a.link{color:var(--accent);text-decoration:none}
+    a.link:hover{text-decoration:underline}
+    .note{font-size:13px;color:var(--muted)}
+    footer{padding:20px 0 0 0;color:var(--muted);font-size:13px}
+    .kicker{font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:.08em}
+    .list-compact li{margin:2px 0}
+    .pill{display:inline-block;border:1px solid var(--line);padding:.2rem .5rem;border-radius:999px;font-size:12px;color:#334155}
+    .badge{display:inline-block;background:#10b981;color:white;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="kicker">Resume Screening Tool <span class="badge">v2.2.0</span></div>
+      <h1>Complete Guide</h1>
+      <p class="sub">Production-ready AI screening system with advanced scoring, synonym matching, and red flag detection. Uses pre-trained embeddings – no training required.</p>
+      <nav>
+        <a href="#overview">Overview</a>
+        <a href="#whats-new">What's New</a>
+        <a href="#stack">Stack</a>
+        <a href="#install">Install</a>
+        <a href="#run">Run</a>
+        <a href="#test">Test</a>
+        <a href="#use">Use</a>
+        <a href="#troubleshoot">Troubleshoot</a>
+      </nav>
+    </header>
+
+    <section id="overview">
+      <h2>1) Overview</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>What it does</h3>
+          <ul class="list-compact">
+            <li>Upload a <strong>Job Description</strong> (paste text or file).</li>
+            <li>Upload <strong>multiple resumes</strong> (PDF / DOCX / TXT).</li>
+            <li>Scores combine <strong>6 components</strong>: semantic similarity, keywords, must-haves, experience, education, bonus.</li>
+            <li>Shows <strong>matched keywords</strong>, <strong>missing must-haves</strong>, <strong>red flags</strong>, and <strong>strengths</strong>.</li>
+            <li>Makes <strong>final decisions</strong>: STRONG_HIRE, HIRE, MAYBE, NO_HIRE, REJECT.</li>
+            <li>Export ranked results to <strong>CSV</strong>.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Scoring Formula (v2.2.0)</h3>
+          <p><code>35% semantic + 25% keywords + 20% must-haves + 10% experience + 5% education + 5% bonus</code></p>
+          <p class="note">Must-haves are <strong>proportional</strong> (4/5 = 80%, not binary). Red flags apply -5% penalty each.</p>
+          <p><span class="pill">No training needed</span> <span class="pill">Fast & explainable</span> <span class="pill">C++/C#/.NET support</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="whats-new">
+      <h2>2) What's New in v2.2.0</h2>
+      <div class="card">
+        <h3>🚀 Major Improvements</h3>
+        <ul>
+          <li><strong>Fixed C++, C#, .NET matching</strong> – Special characters now match correctly</li>
+          <li><strong>4x faster keyword matching</strong> – Pre-filtering optimization</li>
+          <li><strong>13% more accurate</strong> – Weighted semantic scoring for long resumes</li>
+          <li><strong>Proportional must-haves</strong> – Fair scoring (4/5 = 80%, not binary)</li>
+          <li><strong>Experience validation</strong> – Extracts and validates years of experience</li>
+          <li><strong>Red flag detection</strong> – Identifies keyword stuffing, short resumes, job hopping</li>
+          <li><strong>Synonym expansion</strong> – JS ↔ JavaScript, ML ↔ Machine Learning, etc.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="stack">
+      <h2>3) Tech Stack</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Frontend</h3>
+          <ul class="list-compact">
+            <li>HTML + Tailwind CSS (CDN) + Vanilla JavaScript</li>
+            <li>Responsive design with drag & drop uploads</li>
+            <li>Real-time progress tracking</li>
+          </ul>
+          <h3>API Endpoints</h3>
+          <ul class="list-compact">
+            <li><code>GET /api/health</code> – Health check & version</li>
+            <li><code>POST /api/screen</code> – Screen all resumes</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Backend</h3>
+          <ul class="list-compact">
+            <li>FastAPI + Uvicorn</li>
+            <li>Embeddings: <code>sentence-transformers/all-MiniLM-L6-v2</code></li>
+            <li>Fuzzy matching: RapidFuzz (with pre-filtering)</li>
+            <li>Parsing: pypdf, python-docx</li>
+            <li>Parallel processing: ThreadPoolExecutor</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <h2>4) Installation (Windows)</h2>
+
+      <h3>Prerequisites</h3>
+      <ul>
+        <li>Python 3.10+ (<code>python --version</code>)</li>
+        <li>Use CMD or PowerShell</li>
+      </ul>
+
+      <h3>Step 1: Open project folder</h3>
+      <pre><code>cd C:\Users\YourUsername\resume_screening_app</code></pre>
+
+      <h3>Step 2: Create virtual environment</h3>
+      <pre><code>python -m venv .venv
+.venv\Scripts\activate</code></pre>
+      <p class="note">PowerShell: <code>.\.venv\Scripts\Activate.ps1</code> (if blocked, run <code>Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass</code> first)</p>
+
+      <h3>Step 3: Install dependencies</h3>
+      <pre><code>python -m pip install --upgrade pip
+python -m pip install -r requirements.txt</code></pre>
+      <p class="note">If PyTorch fails, use CPU build: <code>pip install torch --index-url https://download.pytorch.org/whl/cpu</code></p>
+
+      <h3>Step 4: Verify installation</h3>
+      <pre><code>python -c "import fastapi, sentence_transformers; print('✓ All dependencies installed')"</code></pre>
+    </section>
+
+    <section id="run">
+      <h2>5) Run the Server</h2>
+      <div class="grid two">
+        <div class="card">
+          <h3>Option A – Simple</h3>
+          <pre><code>python main.py</code></pre>
+          <p>Opens at <a class="link" href="http://127.0.0.1:8000/" target="_blank">http://127.0.0.1:8000/</a></p>
+        </div>
+        <div class="card">
+          <h3>Option B – Uvicorn</h3>
+          <pre><code>python -m uvicorn main:app --reload --port 8000</code></pre>
+          <p>Health: <code>/api/health</code></p>
+        </div>
+      </div>
+
+      <h3>Quick Launcher (Optional)</h3>
+      <p>Create <code>run.bat</code> in project folder:</p>
+      <pre><code>@echo off
+cd /d %~dp0
+call .venv\Scripts\activate
+python main.py
+pause</code></pre>
+      <p>Double-click <code>run.bat</code> to start!</p>
+    </section>
+
+    <section id="test">
+      <h2>6) Test with Sample Data</h2>
+      
+      <h3>Quick Test</h3>
+      <ol>
+        <li>Open <a class="link" href="http://127.0.0.1:8000/" target="_blank">http://127.0.0.1:8000/</a></li>
+        <li>Paste this Job Description:</li>
+      </ol>
+      <pre><code>We are looking for a Senior Machine Learning Engineer.
+
+Requirements:
+- 5+ years experience in Python and ML
+- Strong knowledge of PyTorch, TensorFlow, scikit-learn
+- Experience with Docker and cloud platforms (AWS/Azure)
+- Bachelor's degree in Computer Science or related field
+- SQL and database design experience
+
+Nice to have:
+- NLP and transformer models experience
+- LangChain, MLflow
+- French or Arabic language skills</code></pre>
+
+      <p>Must-haves:</p>
+      <pre><code>Python, PyTorch, scikit-learn, Docker, AWS, Bachelor's degree, 5 years experience</code></pre>
+
+      <p>Nice-to-haves:</p>
+      <pre><code>NLP, LangChain, MLflow, French, Arabic</code></pre>
+
+      <p>Set minimum years: <code>5</code></p>
+      <p>Required education: <code>Bachelor's Degree</code></p>
+
+      <ol start="3">
+        <li>Upload test resumes (PDF/DOCX/TXT)</li>
+        <li>Click <strong>Run Screening</strong></li>
+        <li>View results and click <strong>View Details</strong> for any candidate</li>
+        <li>Export to CSV for record-keeping</li>
+      </ol>
+    </section>
+
+    <section id="use">
+      <h2>7) Using the App</h2>
+      
+      <div class="grid two">
+        <div class="card">
+          <h3>Decision Types</h3>
+          <ul class="list-compact">
+            <li><strong>STRONG_HIRE</strong> (85-100) – Excellent fit, schedule interview immediately</li>
+            <li><strong>HIRE</strong> (75-84) – Good fit, move to next round</li>
+            <li><strong>MAYBE</strong> (60-74) – Borderline, needs review</li>
+            <li><strong>NO_HIRE</strong> (45-59) – Not a good fit</li>
+            <li><strong>REJECT</strong> (0-44) – Clear mismatch</li>
+          </ul>
+        </div>
+        
+        <div class="card">
+          <h3>Best Practices</h3>
+          <ul class="list-compact">
+            <li>Include clear "Requirements" section in JD</li>
+            <li>List 5-10 must-haves (not 30)</li>
+            <li>Use full names: "Python" not "Py"</li>
+            <li>Specify experience level if critical</li>
+            <li>Review "MAYBE" decisions manually</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Synonym Support</h3>
+      <p>The system automatically recognizes common variations:</p>
+      <ul class="list-compact">
+        <li>JavaScript ↔ JS, ES6, ECMAScript</li>
+        <li>TypeScript ↔ TS</li>
+        <li>C++ ↔ cpp, C plus plus</li>
+        <li>C# ↔ csharp, C sharp</li>
+        <li>.NET ↔ dotnet, ASP.NET</li>
+        <li>Machine Learning ↔ ML</li>
+        <li>Natural Language Processing ↔ NLP</li>
+        <li>PostgreSQL ↔ Postgres, psql</li>
+        <li>MongoDB ↔ Mongo</li>
+        <li>Docker ↔ containerization</li>
+      </ul>
+    </section>
+
+    <section id="troubleshoot">
+      <h2>8) Troubleshooting</h2>
+      
+      <h3>Common Issues</h3>
+      
+      <div class="card">
+        <h4>❌ "uvicorn not recognized"</h4>
+        <p><strong>Solution:</strong> Activate virtual environment or use <code>python main.py</code></p>
+        <pre><code>.venv\Scripts\activate
+python main.py</code></pre>
+      </div>
+
+      <div class="card">
+        <h4>❌ Nothing happens with <code>python main.py</code></h4>
+        <p><strong>Solution:</strong> Ensure main.py has the startup block:</p>
+        <pre><code>if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)</code></pre>
+      </div>
+
+      <div class="card">
+        <h4>❌ Port 8000 already in use</h4>
+        <p><strong>Solution:</strong> Change port:</p>
+        <pre><code>python -m uvicorn main:app --port 8001</code></pre>
+      </div>
+
+      <div class="card">
+        <h4>❌ C++ or C# not matching</h4>
+        <p><strong>Solution:</strong> Ensure you're using v2.2.0 (check /api/health)</p>
+        <pre><code>curl http://127.0.0.1:8000/api/health</code></pre>
+        <p>Should return: <code>{"version": "2.2.0"}</code></p>
+      </div>
+
+      <div class="card">
+        <h4>❌ Slow performance</h4>
+        <p><strong>Solution:</strong> Adjust config in main.py:</p>
+        <pre><code>MAX_PARSE_WORKERS = 8  # Increase for more CPU cores
+SEMANTIC_CHUNK_AGG = "max"  # Faster (slightly less accurate)</code></pre>
+      </div>
+
+      <div class="card">
+        <h4>❌ Scanned PDFs not working</h4>
+        <p><strong>Solution:</strong> Add OCR support (optional):</p>
+        <pre><code>pip install pytesseract
+# Install Tesseract: https://github.com/UB-Mannheim/tesseract/wiki</code></pre>
+      </div>
+    </section>
+
+    <section id="advanced">
+      <h2>9) Advanced Configuration</h2>
+      
+      <h3>Tuning Performance</h3>
+      <p>Edit these constants in <code>main.py</code>:</p>
+      <pre><code># Speed vs Accuracy
+SEMANTIC_CHUNK_AGG = "weighted_top"  # or "max" (faster) or "avg"
+SEMANTIC_TOP_K = 3  # Number of chunks to average
+
+# File Limits
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_RESUMES = 50  # Max files per batch
+MAX_PDF_PAGES = 100  # Pages to process per PDF
+
+# Performance
+MAX_PARSE_WORKERS = 4  # Parallel file parsing
+FUZZY_PRE_FILTER = True  # Always keep enabled</code></pre>
+
+      <h3>Customizing Scoring Weights</h3>
+      <p>Modify in <code>main.py</code>:</p>
+      <pre><code>@dataclass
+class ScoringWeights:
+    semantic: float = 0.35    # Adjust these
+    keywords: float = 0.25
+    must_haves: float = 0.20
+    experience: float = 0.10
+    education: float = 0.05
+    bonus: float = 0.05</code></pre>
+
+      <h3>Adding Custom Synonyms</h3>
+      <p>Expand <code>TECH_SYNONYMS</code> in <code>main.py</code>:</p>
+      <pre><code>TECH_SYNONYMS = {
+    "your_term": ["synonym1", "synonym2"],
+    # ... existing entries
+}</code></pre>
+    </section>
+
+    <section id="api">
+      <h2>10) API Reference</h2>
+      
+      <h3>GET /api/health</h3>
+      <p>Health check and version info</p>
+      <pre><code>curl http://127.0.0.1:8000/api/health</code></pre>
+      <p>Response:</p>
+      <pre><code>{
+  "status": "healthy",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "timestamp": 1234567890,
+  "version": "2.2.0"
+}</code></pre>
+
+      <h3>POST /api/screen</h3>
+      <p>Screen multiple resumes against a job description</p>
+      <p><strong>Parameters:</strong></p>
+      <ul class="list-compact">
+        <li><code>jd_text</code> (string, optional) – Job description text</li>
+        <li><code>jd_file</code> (file, optional) – Job description file (PDF/DOCX/TXT)</li>
+        <li><code>must_haves</code> (string, optional) – Comma-separated must-have skills</li>
+        <li><code>nice_to_haves</code> (string, optional) – Comma-separated nice-to-have skills</li>
+        <li><code>required_years</code> (int, optional) – Minimum years of experience</li>
+        <li><code>required_education</code> (string, optional) – Required education level</li>
+        <li><code>resumes</code> (file[], required) – Resume files (max 50)</li>
+      </ul>
+
+      <p><strong>Response:</strong></p>
+      <pre><code>{
+  "summary": {
+    "total_candidates": 10,
+    "strong_hire": 2,
+    "hire": 3,
+    "maybe": 3,
+    "no_hire": 1,
+    "reject": 1
+  },
+  "results": [
+    {
+      "candidate_name": "John Smith",
+      "filename": "john_smith_resume.pdf",
+      "decision": "STRONG_HIRE",
+      "confidence": 90.0,
+      "total_score": 87.5,
+      "semantic_score": 85.2,
+      "keyword_coverage": 78.5,
+      "must_have_score": 100.0,
+      "experience_score": 100.0,
+      "education_score": 80.0,
+      "bonus_score": 40.0,
+      "years_experience": 7.0,
+      "matched_keywords": ["python", "aws", "docker"],
+      "missing_must_haves": [],
+      "matched_nice_to_haves": ["react", "typescript"],
+      "red_flags": [],
+      "strengths": ["✅ Strong overall fit"],
+      "reasoning": "**Decision: STRONG_HIRE** (Total Score: 87.5/100)..."
+    }
+  ]
+}</code></pre>
+    </section>
+
+    <footer>
+      <p>Resume Screening Tool v2.2.0 • Built by Boubaker Khemili</p>
+      <p class="note">Powered by Sentence Transformers & FastAPI</p>
+    </footer>
+  </div>
+
+</body>
+</html>

@@ -197,7 +197,7 @@ resume-screener/
 
 ```bash
 # Clone repository
-git clone https://github.com/boubaker-khemili/resume-screener.git
+git clone https://github.com/siham-isa/resume-screener.git
 cd resume-screener
 
 # Create isolated environment

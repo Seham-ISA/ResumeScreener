@@ -1,10 +1,10 @@
 <div align="center">
 
 <!-- Custom Banner -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=180&section=header&text=ResumeScreener&fontSize=42&fontColor=fff&animation=twinkling&fontAlignY=32&desc=AI-Powered%20Resume%20Screening%20%26%20Ranking%20Engine&descAlignY=52&descSize=18" width="100%"/>
+<img src="si/>
 
 <!-- Badges Row 1 - Status -->
-[![Version](https://img.shields.io/badge/version-2.2.0-blue?style=flat-square)](https://github.com/boubaker-khemili/resume-screener/releases)
+[![Version](https://img.shields.io/badge/version-2.2.0-blue?style=flat-square)](https://github.com/siham-isa/resume-screener/releases)
 [![Python](https://img.shields.io/badge/python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.112+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
@@ -224,7 +224,7 @@ python main.py
 ### One-Liner (for the impatient)
 
 ```bash
-git clone https://github.com/boubaker-khemili/resume-screener.git && cd resume-screener && python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && python main.py
+git clone https://github.com/siham-isa/resume-screener.git && cd resume-screener && python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && python main.py
 ```
 
 ---

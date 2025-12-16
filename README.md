@@ -1,7 +1,10 @@
 <div align="center">
 
-<!-- Custom Banner -->
-<img src="si/>
+# 🎯 ResumeScreener
+
+### AI-Powered Resume Screening & Ranking Engine
+
+<br/>
 
 <!-- Badges Row 1 - Status -->
 [![Version](https://img.shields.io/badge/version-2.2.0-blue?style=flat-square)](https://github.com/siham-isa/resume-screener/releases)
@@ -224,7 +227,7 @@ python main.py
 ### One-Liner (for the impatient)
 
 ```bash
-git clone https://github.com/siham-isa/resume-screener.git && cd resume-screener && python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && python main.py
+git clone https://github.com/boubaker-khemili/resume-screener.git && cd resume-screener && python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && python main.py
 ```
 
 ---
@@ -466,8 +469,12 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 <div align="center">
 
-**Built with ❤️ by [Siham ISA](https://github.com/siham-isa)**
+**Built with ❤️ by [Siham Isa](https://github.com/siham-isa)**
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>
+*If this project helped you, consider giving it a ⭐*
+
+---
+
+**[⬆ Back to Top](#-resumescreener)**
 
 </div>
